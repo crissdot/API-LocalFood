@@ -38,7 +38,9 @@ THIRD_APPS = [
     'rest_framework',
 ]
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    'apps.localfood',
+]
 
 INSTALLED_APPS = BASED_APPS + THIRD_APPS + LOCAL_APPS
 
