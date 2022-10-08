@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .api import LocalFoodViewSet
+from . import LocalFoodViewSet
 
 router = routers.DefaultRouter()
 

@@ -1,6 +1,5 @@
-from dataclasses import field, fields
 from rest_framework import serializers
-from .models import LocalFood
+from ..models import LocalFood
 
 class LocalFoodSerializer(serializers.ModelSerializer):
   class Meta:

@@ -1,5 +1,5 @@
 from rest_framework import viewsets, permissions
-from .models import LocalFood
+from ..models import LocalFood
 from .serializers import LocalFoodSerializer
 
 class LocalFoodViewSet(viewsets.ModelViewSet):
