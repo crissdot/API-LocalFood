@@ -4,5 +4,4 @@ from ..models import LocalFood
 class LocalFoodSerializer(serializers.ModelSerializer):
   class Meta:
     model = LocalFood
-    fields = ('id', 'name', 'description', 'registered_at')
-    read_only_fields = ('registered_at',)
+    fields = ('id', 'name', 'description')
