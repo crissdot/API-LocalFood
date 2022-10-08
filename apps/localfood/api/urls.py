@@ -1,8 +1,6 @@
-from rest_framework import routers
-from . import LocalFoodViewSet
+from django.urls import path
+from .api import LocalFoodAPIView
 
-router = routers.DefaultRouter()
-
-router.register('negocios', LocalFoodViewSet, 'negocios')
-
-urlpatterns = router.urls
+urlpatterns = [
+  path('', LocalFoodAPIView.as_view(), name='negocios')
+]
