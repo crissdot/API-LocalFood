@@ -1,6 +1,7 @@
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 from ..models import LocalFood
 from .serializers import LocalFoodSerializer
 
@@ -14,8 +15,9 @@ class LocalFoodAPIView(APIView):
     local_food_serializer = LocalFoodSerializer(data = request.data)
     if local_food_serializer.is_valid():
       local_food_serializer.save()
-      return Response(local_food_serializer.data)
-    return Response(local_food_serializer.errors)
+      return Response(local_food_serializer.data, status=status.HTTP_201_CREATED)
+    return Response(local_food_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LocalFoodDetailAPIView(APIView):
   def get_localfood(self, pk):
@@ -35,9 +37,9 @@ class LocalFoodDetailAPIView(APIView):
     if local_food_serializer.is_valid():
       local_food_serializer.save()
       return Response(local_food_serializer.data)
-    return Response(local_food_serializer.errors)
+    return Response(local_food_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
   def delete(self, request, pk):
     local_food = self.get_localfood(pk)
     local_food.delete()
-    return Response('Eliminado')
+    return Response({'detail': 'Negocio eliminado correctamente'})
