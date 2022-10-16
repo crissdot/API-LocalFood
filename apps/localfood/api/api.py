@@ -1,3 +1,4 @@
+from functools import partial
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -33,7 +34,7 @@ class LocalFoodDetailAPIView(APIView):
 
   def patch(self, request, pk):
     local_food = self.get_localfood(pk)
-    local_food_serializer = LocalFoodSerializer(local_food, data=request.data)
+    local_food_serializer = LocalFoodSerializer(local_food, data=request.data, partial=True)
     if local_food_serializer.is_valid():
       local_food_serializer.save()
       return Response(local_food_serializer.data)
