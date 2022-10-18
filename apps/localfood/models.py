@@ -6,7 +6,7 @@ from ..base.models import BaseModel
 # Create your models here.
 class LocalFood(BaseModel):
   name = models.CharField(max_length=50)
-  description = models.TextField()
+  description = models.TextField(null=True, blank=True)
   historical = HistoricalRecords()
 
   @property

@@ -22,9 +22,9 @@ class Category(BaseModel):
 
 class Product(BaseModel):
   name = models.CharField(max_length=100)
-  description = models.TextField(null=True)
-  image = models.ImageField(upload_to='products/', null=True)
-  category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
+  description = models.TextField(null=True, blank=True)
+  image = models.ImageField(upload_to='products/', null=True, blank=True)
+  category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
   historical = HistoricalRecords()
 
   @property
