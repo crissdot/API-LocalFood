@@ -40,7 +40,9 @@ THIRD_APPS = [
 ]
 
 LOCAL_APPS = [
+    'apps.base',
     'apps.localfood',
+    'apps.products',
     'apps.user',
 ]
 
