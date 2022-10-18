@@ -6,11 +6,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Category
-    exclude = ('state',)
+    exclude = ('state', 'deleted_at', 'modified_at', 'created_at')
 
 
 class ProductSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Product
-    exclude = ('state',)
+    exclude = ('state', 'deleted_at', 'modified_at', 'created_at')
