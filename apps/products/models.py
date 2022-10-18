@@ -15,6 +15,7 @@ class Product(BaseModel):
   name = models.CharField(max_length=100)
   description = models.TextField(null=True)
   image = models.ImageField(upload_to='products/', null=True)
+  category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
   historical = HistoricalRecords()
 
   def __str__(self):
