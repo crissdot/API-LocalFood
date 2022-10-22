@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from simple_history.models import HistoricalRecords
 
+from ..base.models import BaseModel
+
 # Create your models here.
 class UserManager(BaseUserManager):
   def create_user(self, username, password=None):
@@ -20,9 +22,8 @@ class UserManager(BaseUserManager):
     user.save()
     return user
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, BaseModel):
   username = models.CharField(max_length=50, unique=True)
-  is_active = models.BooleanField(default=True)
   is_superuser = models.BooleanField(default=False)
   objects = UserManager()
   historical = HistoricalRecords()
