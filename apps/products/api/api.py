@@ -29,13 +29,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     product_serializer = ProductSerializer(product, many=True)
     return Response(product_serializer.data)
 
-  def retrieve(self, request, *args, **kwargs):
-    return super().retrieve(request, *args, **kwargs)
-
   def create(self, request):
     product_serializer = ProductSerializer(data = request.data)
-    print(product_serializer)
-    print(product_serializer.is_valid())
     if product_serializer.is_valid():
       product_serializer.save()
       return Response(product_serializer.data, status=status.HTTP_201_CREATED)
