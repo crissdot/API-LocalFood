@@ -27,6 +27,16 @@ class UserViewSet(viewsets.GenericViewSet):
     user_serializer = UserSerializer(user, many=True)
     return Response(user_serializer.data)
 
+  def retrieve(self, request, pk=None):
+    """
+    Obtener un usuario
+
+    Retorna un único objeto con la información del usuario, en caso de no existir retorna un error 404
+    """
+    user = self.get_queryset(pk)
+    user_serializer = UserSerializer(user)
+    return Response(user_serializer.data)
+
   def create(self, request):
     """
     Crear un usuario
@@ -38,16 +48,6 @@ class UserViewSet(viewsets.GenericViewSet):
       user_serializer.save()
       return Response(user_serializer.data, status=status.HTTP_201_CREATED)
     return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-  def retrieve(self, request, pk=None):
-    """
-    Obtener un usuario
-
-    Retorna un único objeto con la información del usuario, en caso de no existir retorna un error 404
-    """
-    user = self.get_queryset(pk)
-    user_serializer = UserSerializer(user)
-    return Response(user_serializer.data)
 
   def update(self, request, pk=None):
     """
