@@ -10,8 +10,16 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-  category = CategorySerializer()
 
   class Meta:
     model = Product
     exclude = ('state', 'deleted_at', 'modified_at', 'created_at')
+
+  def to_representation(self, instance):
+    return {
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'image': instance.image.url if instance.image != '' else '',
+      'category': instance.category.description,
+    }
