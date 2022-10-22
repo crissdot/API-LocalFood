@@ -1,5 +1,4 @@
 from django.http import Http404
-from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,11 +6,36 @@ from rest_framework import status
 from ..models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
 
-class CategoryListAPIView(generics.ListAPIView):
+class CategoryViewSet(viewsets.GenericViewSet):
   serializer_class = CategorySerializer
 
-  def get_queryset(self):
-    return Category.objects.filter(state=True)
+  def get_queryset(self, pk=None):
+    if pk is None:
+      return Category.objects.filter(state = True)
+    try:
+      return Category.objects.get(id=pk, state = True)
+    except Category.DoesNotExist:
+      raise Http404
+
+  def list(self, request):
+    """
+    Obtener todas las categorías
+
+    Retorna un array con todas las categorías existentes, en caso de no haber niguno retorna un array vacío
+    """
+    category = self.get_queryset()
+    category_serializer = CategorySerializer(category, many=True)
+    return Response(category_serializer.data)
+
+  def retrieve(self, request, pk=None):
+    """
+    Obtener una categoría
+
+    Retorna un único objeto con la información de la categoría, en caso de no existir retorna un error 404
+    """
+    category = self.get_queryset(pk)
+    category_serializer = CategorySerializer(category)
+    return Response(category_serializer.data)
 
 class ProductViewSet(viewsets.GenericViewSet):
   serializer_class = ProductSerializer
