@@ -18,16 +18,31 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
       raise Http404
 
   def list(self, request):
+    """
+    Obtener todos los negocios
+
+    Retorna un array con todos los negocios existentes, en caso de no haber niguno retorna un array vacío
+    """
     localfood = self.get_queryset()
     localfood_serializer = LocalFoodSerializer(localfood, many=True)
     return Response(localfood_serializer.data)
 
   def retrieve(self, request, pk=None):
+    """
+    Obtener un negocio
+
+    Retorna un único objeto con la información del negocio, en caso de no existir retorna un error 404
+    """
     localfood = self.get_queryset(pk)
     localfood_serializer = LocalFoodSerializer(localfood)
     return Response(localfood_serializer.data)
 
   def create(self, request):
+    """
+    Crear un negocio
+
+    Retorna el objeto creado con su id, o un error 400 si no cumple con las validaciones
+    """
     localfood_serializer = LocalFoodSerializer(data = request.data)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
@@ -35,6 +50,12 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     return Response(localfood_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
   def update(self, request, pk=None):
+    """
+    Actualiza un negocio
+
+    Retorna el objeto ya actualizado, o en caso de no existir un error 404
+    NOTA Es necesario enviar todos los campos para actualizar correctamente
+    """
     localfood = self.get_queryset(pk)
     localfood_serializer = LocalFoodSerializer(localfood, data=request.data)
     if localfood_serializer.is_valid():
@@ -43,6 +64,11 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     return Response(localfood_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
   def partial_update(self, request, pk=None):
+    """
+    Actualiza parcialmente un negocio
+
+    Retorna el objeto ya actualizado, o en caso de no existir un error 404
+    """
     localfood = self.get_queryset(pk)
     localfood_serializer = LocalFoodSerializer(localfood, data=request.data, partial=True)
     if localfood_serializer.is_valid():
@@ -51,6 +77,11 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     return Response(localfood_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
   def destroy(self, request, pk=None):
+    """
+    Elimina lógicamente un negocio
+
+    Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
+    """
     localfood = self.get_queryset(pk)
     localfood.state = False
     localfood.save()
