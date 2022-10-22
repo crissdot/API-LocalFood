@@ -42,5 +42,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('negocios/', include('apps.localfood.api.urls')),
     path('usuarios/', include('apps.user.api.urls')),
-    path('productos/', include('apps.products.api.urls')),
+    path('platillos/', include('apps.products.api.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
