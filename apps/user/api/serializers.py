@@ -4,7 +4,7 @@ from ..models import User
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ('id', 'username', 'password')
+    exclude = ('is_active', 'deleted_at', 'modified_at', 'created_at')
 
   def create(self, validated_data):
     user = User(**validated_data)

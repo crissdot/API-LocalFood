@@ -4,4 +4,4 @@ from ..models import LocalFood
 class LocalFoodSerializer(serializers.ModelSerializer):
   class Meta:
     model = LocalFood
-    fields = ('id', 'name', 'description')
+    exclude = ('is_active', 'deleted_at', 'modified_at', 'created_at')
