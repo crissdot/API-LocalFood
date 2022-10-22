@@ -1,45 +1,52 @@
 from django.http import Http404
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import viewsets
+
 from ..models import LocalFood
 from .serializers import LocalFoodSerializer
 
-class LocalFoodAPIView(APIView):
-  def get(self, request):
-    local_food = LocalFood.objects.all()
-    local_food_serializer = LocalFoodSerializer(local_food, many = True)
-    return Response(local_food_serializer.data)
+class LocalFoodViewSet(viewsets.ModelViewSet):
+  serializer_class = LocalFoodSerializer
 
-  def post(self, request):
-    local_food_serializer = LocalFoodSerializer(data = request.data)
-    if local_food_serializer.is_valid():
-      local_food_serializer.save()
-      return Response(local_food_serializer.data, status=status.HTTP_201_CREATED)
-    return Response(local_food_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LocalFoodDetailAPIView(APIView):
-  def get_localfood(self, pk):
+  def get_queryset(self, pk=None):
+    if pk is None:
+      return LocalFood.objects.filter(state = True)
     try:
-      return LocalFood.objects.get(pk=pk)
+      return LocalFood.objects.get(id=pk, state = True)
     except LocalFood.DoesNotExist:
       raise Http404
 
-  def get(self, request, pk):
-    local_food = self.get_localfood(pk)
-    local_food_serializer = LocalFoodSerializer(local_food)
-    return Response(local_food_serializer.data)
+  def list(self, request):
+    localfood = self.get_queryset()
+    localfood_serializer = LocalFoodSerializer(localfood, many=True)
+    return Response(localfood_serializer.data)
 
-  def patch(self, request, pk):
-    local_food = self.get_localfood(pk)
-    local_food_serializer = LocalFoodSerializer(local_food, data=request.data, partial=True)
-    if local_food_serializer.is_valid():
-      local_food_serializer.save()
-      return Response(local_food_serializer.data)
-    return Response(local_food_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  def create(self, request):
+    localfood_serializer = LocalFoodSerializer(data = request.data)
+    if localfood_serializer.is_valid():
+      localfood_serializer.save()
+      return Response(localfood_serializer.data, status=status.HTTP_201_CREATED)
+    return Response(localfood_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-  def delete(self, request, pk):
-    local_food = self.get_localfood(pk)
-    local_food.delete()
+  def update(self, request, pk=None):
+    localfood = self.get_queryset(pk)
+    localfood_serializer = LocalFoodSerializer(localfood, data=request.data)
+    if localfood_serializer.is_valid():
+      localfood_serializer.save()
+      return Response(localfood_serializer.data)
+    return Response(localfood_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def partial_update(self, request, pk=None):
+    localfood = self.get_queryset(pk)
+    localfood_serializer = LocalFoodSerializer(localfood, data=request.data, partial=True)
+    if localfood_serializer.is_valid():
+      localfood_serializer.save()
+      return Response(localfood_serializer.data)
+    return Response(localfood_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def destroy(self, request, pk=None):
+    localfood = self.get_queryset(pk)
+    localfood.state = False
+    localfood.save()
     return Response({'detail': 'Negocio eliminado correctamente'})
