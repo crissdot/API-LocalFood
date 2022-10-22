@@ -37,6 +37,7 @@ BASED_APPS = [
 THIRD_APPS = [
     'rest_framework',
     'simple_history',
+    'drf_yasg',
 ]
 
 LOCAL_APPS = [
@@ -47,6 +48,10 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = BASED_APPS + THIRD_APPS + LOCAL_APPS
+
+SWAGGER_SETTINGS = {
+    'DOC_EXPANSION': 'none'
+}
 
 
 MIDDLEWARE = [
