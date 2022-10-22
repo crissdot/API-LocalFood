@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from ..models import User
 from .serializers import UserSerializer
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.GenericViewSet):
   serializer_class = UserSerializer
 
   def get_queryset(self, pk=None):
@@ -28,6 +28,11 @@ class UserViewSet(viewsets.ModelViewSet):
       user_serializer.save()
       return Response(user_serializer.data, status=status.HTTP_201_CREATED)
     return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def retrieve(self, request, pk=None):
+    user = self.get_queryset(pk)
+    user_serializer = UserSerializer(user)
+    return Response(user_serializer.data)
 
   def update(self, request, pk=None):
     user = self.get_queryset(pk)

@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from ..models import LocalFood
 from .serializers import LocalFoodSerializer
 
-class LocalFoodViewSet(viewsets.ModelViewSet):
+class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
 
   def get_queryset(self, pk=None):
@@ -20,6 +20,11 @@ class LocalFoodViewSet(viewsets.ModelViewSet):
   def list(self, request):
     localfood = self.get_queryset()
     localfood_serializer = LocalFoodSerializer(localfood, many=True)
+    return Response(localfood_serializer.data)
+
+  def retrieve(self, request, pk=None):
+    localfood = self.get_queryset(pk)
+    localfood_serializer = LocalFoodSerializer(localfood)
     return Response(localfood_serializer.data)
 
   def create(self, request):

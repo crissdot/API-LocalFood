@@ -13,7 +13,7 @@ class CategoryListAPIView(generics.ListAPIView):
   def get_queryset(self):
     return Category.objects.filter(state=True)
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(viewsets.GenericViewSet):
   serializer_class = ProductSerializer
 
   def get_queryset(self, pk=None):
@@ -27,6 +27,11 @@ class ProductViewSet(viewsets.ModelViewSet):
   def list(self, request):
     product = self.get_queryset()
     product_serializer = ProductSerializer(product, many=True)
+    return Response(product_serializer.data)
+
+  def retrieve(self, request, pk=None):
+    product = self.get_queryset(pk)
+    product_serializer = ProductSerializer(product)
     return Response(product_serializer.data)
 
   def create(self, request):
