@@ -11,9 +11,9 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
   def get_queryset(self, pk=None):
     if pk is None:
-      return LocalFood.objects.filter(state = True)
+      return LocalFood.objects.filter(is_active = True)
     try:
-      return LocalFood.objects.get(id=pk, state = True)
+      return LocalFood.objects.get(id=pk, is_active = True)
     except LocalFood.DoesNotExist:
       raise Http404
 
@@ -83,6 +83,6 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """
     localfood = self.get_queryset(pk)
-    localfood.state = False
+    localfood.is_active = False
     localfood.save()
     return Response({'detail': 'Negocio eliminado correctamente'})

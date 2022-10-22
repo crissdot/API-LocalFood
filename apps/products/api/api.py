@@ -11,9 +11,9 @@ class CategoryViewSet(viewsets.GenericViewSet):
 
   def get_queryset(self, pk=None):
     if pk is None:
-      return Category.objects.filter(state = True)
+      return Category.objects.filter(is_active = True)
     try:
-      return Category.objects.get(id=pk, state = True)
+      return Category.objects.get(id=pk, is_active = True)
     except Category.DoesNotExist:
       raise Http404
 
@@ -42,9 +42,9 @@ class ProductViewSet(viewsets.GenericViewSet):
 
   def get_queryset(self, pk=None):
     if pk is None:
-      return Product.objects.filter(state = True)
+      return Product.objects.filter(is_active = True)
     try:
-      return Product.objects.get(id=pk, state = True)
+      return Product.objects.get(id=pk, is_active = True)
     except Product.DoesNotExist:
       raise Http404
 
@@ -114,6 +114,6 @@ class ProductViewSet(viewsets.GenericViewSet):
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """
     product = self.get_queryset(pk)
-    product.state = False
+    product.is_active = False
     product.save()
     return Response({'detail': 'Producto eliminado correctamente'})

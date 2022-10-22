@@ -11,9 +11,9 @@ class UserViewSet(viewsets.GenericViewSet):
 
   def get_queryset(self, pk=None):
     if pk is None:
-      return User.objects.filter(state = True)
+      return User.objects.filter(is_active = True)
     try:
-      return User.objects.get(id=pk, state = True)
+      return User.objects.get(id=pk, is_active = True)
     except User.DoesNotExist:
       raise Http404
 
@@ -83,6 +83,6 @@ class UserViewSet(viewsets.GenericViewSet):
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """
     user = self.get_queryset(pk)
-    user.state = False
+    user.is_active = False
     user.save()
     return Response({'detail': 'Usuario eliminado correctamente'})
