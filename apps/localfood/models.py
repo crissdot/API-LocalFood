@@ -1,8 +1,8 @@
-from email.policy import default
 from django.db import models
 from simple_history.models import HistoricalRecords
 
 from ..base.models import BaseModel
+from ..user.models import User
 
 # Create your models here.
 class LocalFood(BaseModel):
@@ -22,6 +22,7 @@ class LocalFood(BaseModel):
   social_medias = models.CharField(max_length=2, choices=SOCIAL_MEDIAS_OPTIONS, null=True, blank=True)
   profile_image = models.ImageField(upload_to='images/localfood/', null=True, blank=True)
   banner_image = models.ImageField(upload_to='images/localfood/', null=True, blank=True)
+  owner = models.OneToOneField(User, on_delete=models.RESTRICT, null=False, blank=False)
   historical = HistoricalRecords()
 
   @property
