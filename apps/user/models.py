@@ -24,6 +24,10 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, BaseModel):
   username = models.CharField(max_length=50, unique=True)
+  name = models.CharField(max_length=50, null=True, blank=True)
+  last_name = models.CharField(max_length=50, null=True, blank=True)
+  phone_number = models.CharField(max_length=10, null=True, blank=True)
+  email = models.EmailField(null=True, blank=True)
   is_superuser = models.BooleanField(default=False)
   objects = UserManager()
   historical = HistoricalRecords()
