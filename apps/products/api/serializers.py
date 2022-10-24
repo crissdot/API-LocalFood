@@ -20,6 +20,6 @@ class ProductSerializer(serializers.ModelSerializer):
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,
-      'image': instance.image.url if instance.image != '' else '',
+      'image': instance.image.url if instance.image else None,
       'category': instance.category.description,
     }
