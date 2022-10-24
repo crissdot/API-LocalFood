@@ -22,4 +22,5 @@ class ProductSerializer(serializers.ModelSerializer):
       'description': instance.description,
       'image': instance.image.url if instance.image else None,
       'category': instance.category.description,
+      'localfood': instance.localfood.name,
     }
