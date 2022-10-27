@@ -22,6 +22,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from apps.user.views import Login
+
 schema_view = get_schema_view(
     openapi.Info(
         title="LocalFood API",
@@ -42,5 +44,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('negocios/', include('apps.localfood.api.urls')),
     path('usuarios/', include('apps.user.api.urls')),
+    path('login/', Login.as_view()),
     path('platillos/', include('apps.products.api.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
