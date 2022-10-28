@@ -5,8 +5,9 @@ from rest_framework import viewsets
 
 from ..models import LocalFood
 from .serializers import LocalFoodSerializer
+from apps.user.authentication_mixins import Authentication
 
-class LocalFoodViewSet(viewsets.GenericViewSet):
+class LocalFoodViewSet(Authentication, viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
 
   def get_queryset(self, pk=None):
