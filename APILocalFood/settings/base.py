@@ -40,6 +40,7 @@ THIRD_APPS = [
     'rest_framework.authtoken',
     'simple_history',
     'drf_yasg',
+    'corsheaders',
 ]
 
 LOCAL_APPS = [
@@ -59,6 +60,7 @@ SWAGGER_SETTINGS = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -129,3 +131,7 @@ AUTH_USER_MODEL = 'user.User'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# Temporarily
+CORS_ALLOW_ALL_ORIGINS = True
