@@ -5,10 +5,12 @@ from rest_framework import viewsets
 
 from ..models import User
 from .serializers import UserSerializer
+from apps.user.authentication_mixins import Authentication
 
 class UserViewSet(viewsets.GenericViewSet):
   serializer_class = UserSerializer
   queryset = None
+  authentication_classes = (Authentication, )
 
   def get_object(self, pk):
     return get_object_or_404(User, pk=pk)

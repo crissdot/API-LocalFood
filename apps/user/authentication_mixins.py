@@ -1,4 +1,4 @@
-from rest_framework import authentication, permissions
+from rest_framework import authentication
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 
@@ -13,7 +13,7 @@ class Authentication(authentication.BaseAuthentication):
   def get_user(self, request):
     token_header = get_authorization_header(request).split()
     if not token_header:
-      raise AuthenticationFailed('Debes iniciar sesión para acceder')
+      return None
 
     try:
       token_auth = TokenAuthentication()
@@ -24,12 +24,3 @@ class Authentication(authentication.BaseAuthentication):
       return user
     except:
       raise AuthenticationFailed('Token inválido')
-
-
-class AuthenticationOrReadOnly(Authentication):
-
-  def authenticate(self, request):
-    if request.method in permissions.SAFE_METHODS:
-      return (None, None)
-
-    return super().authenticate(request)
