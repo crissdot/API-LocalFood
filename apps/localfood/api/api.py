@@ -7,8 +7,9 @@ from ..models import LocalFood
 from .serializers import LocalFoodSerializer
 from apps.user.authentication_mixins import Authentication
 
-class LocalFoodViewSet(Authentication, viewsets.GenericViewSet):
+class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
+  authentication_classes = (Authentication, )
 
   def get_queryset(self, pk=None):
     if pk is None:

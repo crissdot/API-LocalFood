@@ -1,12 +1,17 @@
+from rest_framework import authentication, permissions
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
-from rest_framework import status
 
-class Authentication(object):
+class Authentication(authentication.BaseAuthentication):
   user = None
   token = None
+
+  def authenticate(self, request):
+    if request.method in permissions.SAFE_METHODS:
+      return (None, None)
+
+    user = self.get_user(request)
+    return (user, None)
 
   def get_user(self, request):
     token_header = get_authorization_header(request).split()
@@ -17,19 +22,8 @@ class Authentication(object):
       token_auth = TokenAuthentication()
       token_decoded = token_header[1].decode()
       user, token = token_auth.authenticate_credentials(token_decoded)
+      self.user = user
       self.token = token
       return user
     except:
       raise AuthenticationFailed('Token inválido')
-
-
-  def dispatch(self, request):
-    try:
-      self.user = self.get_user(request)
-      return super().dispatch(request)
-    except AuthenticationFailed as e:
-      response = Response({'mensaje': e.detail}, status=status.HTTP_401_UNAUTHORIZED)
-      response.accepted_renderer = JSONRenderer()
-      response.accepted_media_type = 'application/json'
-      response.renderer_context = dict()
-      return response
