@@ -7,9 +7,6 @@ class Authentication(authentication.BaseAuthentication):
   token = None
 
   def authenticate(self, request):
-    if request.method in permissions.SAFE_METHODS:
-      return (None, None)
-
     user = self.get_user(request)
     return (user, None)
 
@@ -27,3 +24,12 @@ class Authentication(authentication.BaseAuthentication):
       return user
     except:
       raise AuthenticationFailed('Token inválido')
+
+
+class AuthenticationOrReadOnly(Authentication):
+
+  def authenticate(self, request):
+    if request.method in permissions.SAFE_METHODS:
+      return (None, None)
+
+    return super().authenticate(request)
