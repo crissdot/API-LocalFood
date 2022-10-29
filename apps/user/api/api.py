@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
@@ -8,14 +8,15 @@ from .serializers import UserSerializer
 
 class UserViewSet(viewsets.GenericViewSet):
   serializer_class = UserSerializer
+  queryset = None
 
-  def get_queryset(self, pk=None):
-    if pk is None:
-      return User.objects.filter(is_active = True)
-    try:
-      return User.objects.get(id=pk, is_active = True)
-    except User.DoesNotExist:
-      raise Http404
+  def get_object(self, pk):
+    return get_object_or_404(User, pk=pk)
+
+  def get_queryset(self):
+    if self.queryset is None:
+      self.queryset = User.objects.filter(is_active = True)
+    return self.queryset
 
   def list(self, request):
     """
@@ -33,7 +34,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
     Retorna un único objeto con la información del usuario, en caso de no existir retorna un error 404
     """
-    user = self.get_queryset(pk)
+    user = self.get_object(pk)
     user_serializer = UserSerializer(user)
     return Response(user_serializer.data)
 
@@ -56,7 +57,7 @@ class UserViewSet(viewsets.GenericViewSet):
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     NOTA Es necesario enviar todos los campos para actualizar correctamente
     """
-    user = self.get_queryset(pk)
+    user = self.get_object(pk)
     user_serializer = UserSerializer(user, data=request.data)
     if user_serializer.is_valid():
       user_serializer.save()
@@ -69,7 +70,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
-    user = self.get_queryset(pk)
+    user = self.get_object(pk)
     user_serializer = UserSerializer(user, data=request.data, partial=True)
     if user_serializer.is_valid():
       user_serializer.save()
@@ -82,7 +83,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """
-    user = self.get_queryset(pk)
+    user = self.get_object(pk)
     user.is_active = False
     user.save()
     return Response({'detail': 'Usuario eliminado correctamente'})
