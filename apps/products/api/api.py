@@ -5,6 +5,7 @@ from rest_framework import status
 
 from ..models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
+from apps.user.authentication_mixins import AuthenticationOrReadOnly
 
 class CategoryViewSet(viewsets.GenericViewSet):
   serializer_class = CategorySerializer
@@ -39,6 +40,7 @@ class CategoryViewSet(viewsets.GenericViewSet):
 
 class ProductViewSet(viewsets.GenericViewSet):
   serializer_class = ProductSerializer
+  authentication_classes = (AuthenticationOrReadOnly, )
 
   def get_queryset(self, pk=None):
     if pk is None:

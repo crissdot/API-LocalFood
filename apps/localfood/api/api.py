@@ -5,11 +5,11 @@ from rest_framework import viewsets
 
 from ..models import LocalFood
 from .serializers import LocalFoodSerializer
-from apps.user.authentication_mixins import Authentication
+from apps.user.authentication_mixins import AuthenticationOrReadOnly
 
 class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
-  authentication_classes = (Authentication, )
+  authentication_classes = (AuthenticationOrReadOnly, )
 
   def get_queryset(self, pk=None):
     if pk is None:
