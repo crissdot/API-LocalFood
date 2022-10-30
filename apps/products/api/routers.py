@@ -3,7 +3,7 @@ from .api import ProductViewSet, CategoryViewSet
 
 router = DefaultRouter()
 
-router.register(r'categorias', CategoryViewSet, basename='categorias')
+router.register(r'category', CategoryViewSet, basename='categorias')
 router.register(r'', ProductViewSet, basename='platillos')
 
 router_urls = router.urls

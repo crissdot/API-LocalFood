@@ -53,7 +53,7 @@ class UserViewSet(viewsets.GenericViewSet):
       return Response(user_serializer.data, status=status.HTTP_201_CREATED)
     return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-  @action(detail=True, methods=['patch'], url_path='change-password')
+  @action(detail=True, methods=['patch'], url_path='password')
   def change_password(self, request, pk=None):
     user = self.get_object(pk)
     password_serializer = PasswordSerializer(data=request.data)
