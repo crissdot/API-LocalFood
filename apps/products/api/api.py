@@ -1,3 +1,4 @@
+from itertools import product
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -6,6 +7,7 @@ from rest_framework import status
 from ..models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
 from apps.base.authentication import Authentication
+from apps.base.permissions import IsAuthenticatedAndOwnerUserOrReadOnly
 
 class CategoryViewSet(viewsets.GenericViewSet):
   serializer_class = CategorySerializer
@@ -43,9 +45,12 @@ class ProductViewSet(viewsets.GenericViewSet):
   serializer_class = ProductSerializer
   queryset = None
   authentication_classes = (Authentication, )
+  permission_classes = (IsAuthenticatedAndOwnerUserOrReadOnly, )
 
-  def get_object(self, pk):
-    return get_object_or_404(Product, pk=pk)
+  def get_object(self, request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    self.check_object_permissions(request, product.localfood.owner)
+    return product
 
   def get_queryset(self):
     if self.queryset is None:
@@ -68,7 +73,7 @@ class ProductViewSet(viewsets.GenericViewSet):
 
     Retorna un único objeto con la información del platillo, en caso de no existir retorna un error 404
     """
-    product = self.get_object(pk)
+    product = self.get_object(request, pk)
     product_serializer = ProductSerializer(product)
     return Response(product_serializer.data)
 
@@ -91,7 +96,7 @@ class ProductViewSet(viewsets.GenericViewSet):
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     NOTA Es necesario enviar todos los campos para actualizar correctamente
     """
-    product = self.get_object(pk)
+    product = self.get_object(request, pk)
     product_serializer = ProductSerializer(product, data=request.data)
     if product_serializer.is_valid():
       product_serializer.save()
@@ -104,7 +109,7 @@ class ProductViewSet(viewsets.GenericViewSet):
 
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
-    product = self.get_object(pk)
+    product = self.get_object(request, pk)
     product_serializer = ProductSerializer(product, data=request.data, partial=True)
     if product_serializer.is_valid():
       product_serializer.save()
@@ -117,7 +122,7 @@ class ProductViewSet(viewsets.GenericViewSet):
 
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """
-    product = self.get_object(pk)
+    product = self.get_object(request, pk)
     product.is_active = False
     product.save()
     return Response({'detail': 'Producto eliminado correctamente'})

@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, SAFE_METHODS
 
 # Permission to get, update or delete a user or create one
 class IsAuthenticatedAndOwnerUserOrCreateOne(IsAuthenticated):
@@ -17,4 +17,7 @@ class IsAuthenticatedAndOwnerUserOrCreateOne(IsAuthenticated):
 class IsAuthenticatedAndOwnerUserOrReadOnly(IsAuthenticatedOrReadOnly):
 
   def has_object_permission(self, request, view, obj):
+    if request.method in SAFE_METHODS:
+      return True
+
     return request.user == obj
