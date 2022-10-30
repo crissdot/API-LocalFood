@@ -5,7 +5,7 @@ from rest_framework import viewsets
 
 from ..models import User
 from .serializers import UserSerializer
-from apps.user.authentication_mixins import Authentication
+from apps.base.authentication import Authentication
 
 class UserViewSet(viewsets.GenericViewSet):
   serializer_class = UserSerializer

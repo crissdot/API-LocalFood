@@ -5,7 +5,7 @@ from rest_framework import status
 
 from ..models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
-from apps.user.authentication_mixins import Authentication
+from apps.base.authentication import Authentication
 
 class CategoryViewSet(viewsets.GenericViewSet):
   serializer_class = CategorySerializer

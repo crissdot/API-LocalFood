@@ -5,7 +5,7 @@ from rest_framework import viewsets
 
 from ..models import LocalFood
 from .serializers import LocalFoodSerializer
-from apps.user.authentication_mixins import Authentication
+from apps.base.authentication import Authentication
 
 class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
