@@ -6,14 +6,18 @@ from rest_framework import viewsets
 from ..models import LocalFood
 from .serializers import LocalFoodSerializer
 from apps.base.authentication import Authentication
+from apps.base.permissions import IsAuthenticatedAndOwnerUserOrReadOnly
 
 class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
   queryset = None
   authentication_classes = (Authentication, )
+  permission_classes = (IsAuthenticatedAndOwnerUserOrReadOnly, )
 
-  def get_object(self, pk):
-    return get_object_or_404(LocalFood, pk=pk)
+  def get_object(self, request, pk):
+    localfood = get_object_or_404(LocalFood, pk=pk)
+    self.check_object_permissions(request, localfood.owner)
+    return localfood
 
   def get_queryset(self):
     if self.queryset is None:
@@ -36,7 +40,7 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
     Retorna un único objeto con la información del negocio, en caso de no existir retorna un error 404
     """
-    localfood = self.get_object(pk)
+    localfood = self.get_object(request, pk)
     localfood_serializer = LocalFoodSerializer(localfood)
     return Response(localfood_serializer.data)
 
@@ -59,7 +63,7 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     NOTA Es necesario enviar todos los campos para actualizar correctamente
     """
-    localfood = self.get_object(pk)
+    localfood = self.get_object(request, pk)
     localfood_serializer = LocalFoodSerializer(localfood, data=request.data)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
@@ -72,7 +76,7 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
-    localfood = self.get_object(pk)
+    localfood = self.get_object(request, pk)
     localfood_serializer = LocalFoodSerializer(localfood, data=request.data, partial=True)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
@@ -85,7 +89,7 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """
-    localfood = self.get_object(pk)
+    localfood = self.get_object(request, pk)
     localfood.is_active = False
     localfood.save()
     return Response({'detail': 'Negocio eliminado correctamente'})
