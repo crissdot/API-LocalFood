@@ -6,6 +6,11 @@ class UserSerializer(serializers.ModelSerializer):
     model = User
     exclude = ('last_login', 'is_superuser', 'is_active', 'deleted_at', 'modified_at', 'created_at')
 
+  def validate_password(self, value):
+    if len(value) < 6:
+      raise serializers.ValidationError('La contraseña debe contener más de 6 caracteres')
+    return value
+
   def create(self, validated_data):
     user = User(**validated_data)
     user.set_password(validated_data['password'])
@@ -27,3 +32,13 @@ class UserSerializer(serializers.ModelSerializer):
       'phone_number': instance.phone_number,
       'email': instance.email,
     }
+
+
+class PasswordSerializer(serializers.Serializer):
+  password = serializers.CharField(max_length=128, min_length=6, write_only=True)
+  password2 = serializers.CharField(max_length=128, min_length=6, write_only=True)
+
+  def validate(self, data):
+    if data['password'] != data['password2']:
+      raise serializers.ValidationError({'error': 'Las contraseñas deben ser iguales'})
+    return data

@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework import viewsets
 
 from ..models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, PasswordSerializer
 from apps.base.authentication import Authentication
 
 class UserViewSet(viewsets.GenericViewSet):
@@ -51,6 +52,16 @@ class UserViewSet(viewsets.GenericViewSet):
       user_serializer.save()
       return Response(user_serializer.data, status=status.HTTP_201_CREATED)
     return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  @action(detail=True, methods=['patch'], url_path='change-password')
+  def change_password(self, request, pk=None):
+    user = self.get_object(pk)
+    password_serializer = PasswordSerializer(data=request.data)
+    if password_serializer.is_valid():
+      user.set_password(password_serializer.validated_data['password'])
+      user.save()
+      return Response({'mensaje': 'Contraseña actualizada correctamente'}, status=status.HTTP_200_OK)
+    return Response(password_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
   def update(self, request, pk=None):
     """
