@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework import viewsets
+from drf_yasg.utils import swagger_auto_schema
 
 from ..models import User
 from .serializers import UserSerializer, PasswordSerializer
@@ -53,8 +54,15 @@ class UserViewSet(viewsets.GenericViewSet):
       return Response(user_serializer.data, status=status.HTTP_201_CREATED)
     return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+  @swagger_auto_schema(request_body=PasswordSerializer)
   @action(detail=True, methods=['patch'], url_path='password')
   def change_password(self, request, pk=None):
+    """
+    Cambiar contraseña
+
+    Se deben envíar los campos contraseña y confirmar contraseña en atributos password y password2 respectivamente,
+    se verifica que ambos sean exactamente iguales y de ser así devuelve la contraseña se actualizó correctamente
+    """
     user = self.get_object(pk)
     password_serializer = PasswordSerializer(data=request.data)
     if password_serializer.is_valid():
