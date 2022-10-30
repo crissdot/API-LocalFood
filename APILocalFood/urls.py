@@ -24,6 +24,8 @@ from drf_yasg import openapi
 
 from apps.user.views import Login, Logout
 
+API_PREFIX = 'api/v1/'
+
 schema_view = get_schema_view(
     openapi.Info(
         title="LocalFood API",
@@ -38,13 +40,13 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('admin/', admin.site.urls),
-    path('localfood/', include('apps.localfood.api.urls')),
-    path('user/', include('apps.user.api.urls')),
-    path('login/', Login.as_view()),
-    path('logout/', Logout.as_view()),
-    path('product/', include('apps.products.api.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    re_path(rf'^{API_PREFIX}swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(rf'^{API_PREFIX}swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(rf'^{API_PREFIX}redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path(API_PREFIX + 'admin/', admin.site.urls),
+    path(API_PREFIX + 'localfood/', include('apps.localfood.api.urls')),
+    path(API_PREFIX + 'user/', include('apps.user.api.urls')),
+    path(API_PREFIX + 'login/', Login.as_view()),
+    path(API_PREFIX + 'logout/', Logout.as_view()),
+    path(API_PREFIX + 'product/', include('apps.products.api.urls')),
+] + static(API_PREFIX[0: len(API_PREFIX)-1] + settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
