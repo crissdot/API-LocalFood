@@ -1,7 +1,5 @@
-from email.policy import default
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from simple_history.models import HistoricalRecords
 
 from ..base.models import BaseModel
 
@@ -30,15 +28,6 @@ class User(AbstractBaseUser, BaseModel):
   email = models.EmailField(null=True, blank=True)
   is_superuser = models.BooleanField(default=False)
   objects = UserManager()
-  historical = HistoricalRecords()
-
-  @property
-  def _history_user(self):
-    return self.changed_by
-
-  @_history_user.setter
-  def _history_user(self, value):
-    self.changed_by = value
 
   USERNAME_FIELD = 'username'
   # REQUIRED_FIELDS = []
