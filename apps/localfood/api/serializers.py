@@ -2,9 +2,22 @@ from rest_framework import serializers
 from ..models import LocalFood
 
 class LocalFoodSerializer(serializers.ModelSerializer):
+  SOCIAL_MEDIA_OPTIONS = {
+    'WA': 'Whatsapp',
+    'FB': 'Facebook',
+    'TW': 'Twitter',
+    'IG': 'Instagram',
+  }
+
   class Meta:
     model = LocalFood
     exclude = ('is_active', 'deleted_at', 'modified_at', 'created_at')
+
+  def validate_social_media(self, value):
+    for option in value:
+      if option not in self.SOCIAL_MEDIA_OPTIONS.keys():
+        raise serializers.ValidationError('Ingrese una red social válida')
+    return value
 
   def to_representation(self, instance):
     return {
@@ -15,7 +28,7 @@ class LocalFoodSerializer(serializers.ModelSerializer):
       'phone_number': instance.phone_number,
       'schedule': instance.schedule,
       'has_delivery': instance.has_delivery,
-      'social_medias': instance.social_medias,
+      'social_media': (self.SOCIAL_MEDIA_OPTIONS[option] for option in instance.social_media),
       'profile_image': instance.profile_image.url if instance.profile_image else None,
       'banner_image': instance.banner_image.url if instance.banner_image else None,
       'owner': instance.owner.username,
