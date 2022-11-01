@@ -42,6 +42,8 @@ class UserViewSet(viewsets.GenericViewSet):
     """
     Obtener un usuario
 
+    RUTA PROTEGIDA, SOLO DUEÑO
+
     Retorna un único objeto con la información del usuario, en caso de no existir retorna un error 404
     """
     user = self.get_object(request, pk)
@@ -66,6 +68,8 @@ class UserViewSet(viewsets.GenericViewSet):
     """
     Cambiar contraseña
 
+    RUTA PROTEGIDA, SOLO DUEÑO
+
     Se deben envíar los campos contraseña y confirmar contraseña en atributos password y password2 respectivamente,
     se verifica que ambos sean exactamente iguales y de ser así devuelve la contraseña se actualizó correctamente
     """
@@ -81,6 +85,8 @@ class UserViewSet(viewsets.GenericViewSet):
     """
     Actualiza un usuario
 
+    RUTA PROTEGIDA, SOLO DUEÑO
+
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     NOTA Es necesario enviar todos los campos para actualizar correctamente
     """
@@ -95,6 +101,8 @@ class UserViewSet(viewsets.GenericViewSet):
     """
     Actualiza parcialmente un usuario
 
+    RUTA PROTEGIDA, SOLO DUEÑO
+
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
     user = self.get_object(request, pk)
@@ -107,6 +115,8 @@ class UserViewSet(viewsets.GenericViewSet):
   def destroy(self, request, pk=None):
     """
     Elimina lógicamente un usuario
+
+    RUTA PROTEGIDA, SOLO DUEÑO
 
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """

@@ -48,6 +48,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     """
     Crear un negocio
 
+    RUTA PROTEGIDA
+
     Retorna el objeto creado con su id, o un error 400 si no cumple con las validaciones
     """
     localfood_serializer = LocalFoodSerializer(data = request.data)
@@ -59,6 +61,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
   def update(self, request, pk=None):
     """
     Actualiza un negocio
+
+    RUTA PROTEGIDA, SOLO DUEÑO
 
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     NOTA Es necesario enviar todos los campos para actualizar correctamente
@@ -74,6 +78,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     """
     Actualiza parcialmente un negocio
 
+    RUTA PROTEGIDA, SOLO DUEÑO
+
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
     localfood = self.get_object(request, pk)
@@ -86,6 +92,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
   def destroy(self, request, pk=None):
     """
     Elimina lógicamente un negocio
+
+    RUTA PROTEGIDA, SOLO DUEÑO
 
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """

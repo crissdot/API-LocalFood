@@ -81,6 +81,8 @@ class ProductViewSet(viewsets.GenericViewSet):
     """
     Crear un platillo
 
+    RUTA PROTEGIDA
+
     Retorna el objeto creado con su id, o un error 400 si no cumple con las validaciones
     """
     product_serializer = ProductSerializer(data = request.data)
@@ -92,6 +94,8 @@ class ProductViewSet(viewsets.GenericViewSet):
   def update(self, request, pk=None):
     """
     Actualiza un platillo
+
+    RUTA PROTEGIDA, SOLO DUEÑO
 
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     NOTA Es necesario enviar todos los campos para actualizar correctamente
@@ -107,6 +111,8 @@ class ProductViewSet(viewsets.GenericViewSet):
     """
     Actualiza parcialmente un platillo
 
+    RUTA PROTEGIDA, SOLO DUEÑO
+
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
     product = self.get_object(request, pk)
@@ -119,6 +125,8 @@ class ProductViewSet(viewsets.GenericViewSet):
   def destroy(self, request, pk=None):
     """
     Elimina lógicamente un platillo
+
+    RUTA PROTEGIDA, SOLO DUEÑO
 
     Retorna un mensaje indicando que se ha eliminado correctamente, o en caso de no existir un error 404
     """
