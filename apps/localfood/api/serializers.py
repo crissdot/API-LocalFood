@@ -28,7 +28,7 @@ class LocalFoodSerializer(serializers.ModelSerializer):
       'phone_number': instance.phone_number,
       'schedule': instance.schedule,
       'has_delivery': instance.has_delivery,
-      'social_media': (self.SOCIAL_MEDIA_OPTIONS[option] for option in instance.social_media),
+      'social_media': (self.SOCIAL_MEDIA_OPTIONS[option] for option in instance.social_media) if instance.social_media else None,
       'profile_image': instance.profile_image.url if instance.profile_image else None,
       'banner_image': instance.banner_image.url if instance.banner_image else None,
       'owner': instance.owner.username,
