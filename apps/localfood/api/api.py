@@ -7,6 +7,7 @@ from ..models import LocalFood
 from .serializers import LocalFoodSerializer
 from apps.base.authentication import Authentication
 from apps.base.permissions import IsAuthenticatedAndOwnerUserOrReadOnly
+from apps.base.utils import get_data_with_user_from_token
 
 class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
@@ -52,7 +53,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
     Retorna el objeto creado con su id, o un error 400 si no cumple con las validaciones
     """
-    localfood_serializer = LocalFoodSerializer(data = request.data)
+    data = get_data_with_user_from_token(request, 'owner')
+    localfood_serializer = LocalFoodSerializer(data=data)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
       return Response(localfood_serializer.data, status=status.HTTP_201_CREATED)
@@ -68,7 +70,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     NOTA Es necesario enviar todos los campos para actualizar correctamente
     """
     localfood = self.get_object(request, pk)
-    localfood_serializer = LocalFoodSerializer(localfood, data=request.data)
+    data = get_data_with_user_from_token(request, 'owner')
+    localfood_serializer = LocalFoodSerializer(localfood, data=data)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
       return Response(localfood_serializer.data)
@@ -83,7 +86,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
     localfood = self.get_object(request, pk)
-    localfood_serializer = LocalFoodSerializer(localfood, data=request.data, partial=True)
+    data = get_data_with_user_from_token(request, 'owner')
+    localfood_serializer = LocalFoodSerializer(localfood, data=data, partial=True)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
       return Response(localfood_serializer.data)
