@@ -1,13 +1,14 @@
-from itertools import product
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 
 from ..models import Category, Product
+from apps.localfood.models import LocalFood
 from .serializers import CategorySerializer, ProductSerializer
 from apps.base.authentication import Authentication
 from apps.base.permissions import IsAuthenticatedAndOwnerUserOrReadOnly
+from apps.base.utils import get_data_with_new_field
 
 class CategoryViewSet(viewsets.GenericViewSet):
   serializer_class = CategorySerializer
@@ -47,6 +48,13 @@ class ProductViewSet(viewsets.GenericViewSet):
   authentication_classes = (Authentication, )
   permission_classes = (IsAuthenticatedAndOwnerUserOrReadOnly, )
 
+  def get_data_with_localfood(self, request):
+    localfood = LocalFood.objects.filter(owner=request.user.id).first()
+    if localfood is None:
+      return None
+
+    return get_data_with_new_field(request, 'localfood', localfood.id)
+
   def get_object(self, request, pk):
     product = get_object_or_404(Product, pk=pk)
     self.check_object_permissions(request, product.localfood.owner)
@@ -85,7 +93,11 @@ class ProductViewSet(viewsets.GenericViewSet):
 
     Retorna el objeto creado con su id, o un error 400 si no cumple con las validaciones
     """
-    product_serializer = ProductSerializer(data = request.data)
+    data = self.get_data_with_localfood(request)
+    if data is None:
+      return Response({'mensaje': 'Primero debes crear un negocio'}, status=status.HTTP_400_BAD_REQUEST)
+
+    product_serializer = ProductSerializer(data = data)
     if product_serializer.is_valid():
       product_serializer.save()
       return Response(product_serializer.data, status=status.HTTP_201_CREATED)
@@ -100,8 +112,12 @@ class ProductViewSet(viewsets.GenericViewSet):
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     NOTA Es necesario enviar todos los campos para actualizar correctamente
     """
+    data = self.get_data_with_localfood(request)
+    if data is None:
+      return Response({'mensaje': 'Primero debes crear un negocio'}, status=status.HTTP_400_BAD_REQUEST)
+
     product = self.get_object(request, pk)
-    product_serializer = ProductSerializer(product, data=request.data)
+    product_serializer = ProductSerializer(product, data=data)
     if product_serializer.is_valid():
       product_serializer.save()
       return Response(product_serializer.data)
@@ -115,8 +131,12 @@ class ProductViewSet(viewsets.GenericViewSet):
 
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
+    data = self.get_data_with_localfood(request)
+    if data is None:
+      return Response({'mensaje': 'Primero debes crear un negocio'}, status=status.HTTP_400_BAD_REQUEST)
+
     product = self.get_object(request, pk)
-    product_serializer = ProductSerializer(product, data=request.data, partial=True)
+    product_serializer = ProductSerializer(product, data=data, partial=True)
     if product_serializer.is_valid():
       product_serializer.save()
       return Response(product_serializer.data)
