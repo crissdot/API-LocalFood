@@ -7,13 +7,16 @@ from ..models import LocalFood
 from .serializers import LocalFoodSerializer
 from apps.base.authentication import Authentication
 from apps.base.permissions import IsAuthenticatedAndOwnerUserOrReadOnly
-from apps.base.utils import get_data_with_user_from_token
+from apps.base.utils import get_data_with_new_field
 
 class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
   queryset = None
   authentication_classes = (Authentication, )
   permission_classes = (IsAuthenticatedAndOwnerUserOrReadOnly, )
+
+  def get_data_with_owner(self, request):
+    return get_data_with_new_field(request, 'owner', request.user.id)
 
   def get_object(self, request, pk):
     localfood = get_object_or_404(LocalFood, pk=pk)
@@ -53,7 +56,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
     Retorna el objeto creado con su id, o un error 400 si no cumple con las validaciones
     """
-    data = get_data_with_user_from_token(request, 'owner')
+    data = self.get_data_with_owner(request)
+
     localfood_serializer = LocalFoodSerializer(data=data)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
@@ -69,8 +73,9 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     NOTA Es necesario enviar todos los campos para actualizar correctamente
     """
+    data = self.get_data_with_owner(request)
     localfood = self.get_object(request, pk)
-    data = get_data_with_user_from_token(request, 'owner')
+
     localfood_serializer = LocalFoodSerializer(localfood, data=data)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
@@ -85,8 +90,9 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
     Retorna el objeto ya actualizado, o en caso de no existir un error 404
     """
+    data = self.get_data_with_owner(request)
     localfood = self.get_object(request, pk)
-    data = get_data_with_user_from_token(request, 'owner')
+
     localfood_serializer = LocalFoodSerializer(localfood, data=data, partial=True)
     if localfood_serializer.is_valid():
       localfood_serializer.save()
