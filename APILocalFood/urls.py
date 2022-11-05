@@ -22,7 +22,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from apps.user.views import Login, Logout
+from apps.user.views import Login, Logout, TokenInfoAbout
 
 API_PREFIX = 'api/v1/'
 
@@ -48,5 +48,6 @@ urlpatterns = [
     path(API_PREFIX + 'user/', include('apps.user.api.urls')),
     path(API_PREFIX + 'login/', Login.as_view()),
     path(API_PREFIX + 'logout/', Logout.as_view()),
+    path(API_PREFIX + 'token/about/', TokenInfoAbout.as_view()),
     path(API_PREFIX + 'product/', include('apps.products.api.urls')),
 ] + static(API_PREFIX[0: len(API_PREFIX)-1] + settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

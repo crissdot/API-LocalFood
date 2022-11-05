@@ -6,9 +6,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
+from apps.user.api.serializers import UserSerializer
+from apps.base.authentication import Authentication
 from apps.user.api.serializers import UserSerializer
 
 LOGOUT_RESPONSE = openapi.Response('Sesión cerrada con éxito')
@@ -79,3 +82,22 @@ class Logout(APIView):
     delete_all_sessions(user)
     token.delete()
     return Response({'mensaje': 'Has cerrado sesión correctamente'})
+
+
+class TokenInfoAbout(APIView):
+  authentication_classes = (Authentication, )
+  permission_classes = (IsAuthenticated, )
+
+  def get(self, request):
+    request_token = request.auth
+    print(request_token)
+    if request_token is None:
+      return Response({'mensaje': 'Debes envíar un token'}, status=status.HTTP_400_BAD_REQUEST)
+
+    token = Token.objects.filter(key=request_token).first()
+    if not token:
+      return Response({'mensaje': 'No se encontró un usuario con estas credenciales'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = token.user
+    user_serializer = UserSerializer(user)
+    return Response(user_serializer.data)

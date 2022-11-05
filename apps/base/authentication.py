@@ -3,24 +3,20 @@ from rest_framework.authentication import TokenAuthentication, get_authorization
 from rest_framework.exceptions import AuthenticationFailed
 
 class Authentication(authentication.BaseAuthentication):
-  user = None
-  token = None
 
   def authenticate(self, request):
-    user = self.get_user(request)
-    return (user, None)
+    user, token = self.get_auth(request)
+    return (user, token)
 
-  def get_user(self, request):
+  def get_auth(self, request):
     token_header = get_authorization_header(request).split()
     if not token_header:
-      return None
+      return (None, None)
 
     try:
       token_auth = TokenAuthentication()
       token_decoded = token_header[1].decode()
       user, token = token_auth.authenticate_credentials(token_decoded)
-      self.user = user
-      self.token = token
-      return user
+      return user, token
     except:
       raise AuthenticationFailed('Token inválido')
