@@ -12,7 +12,10 @@ from drf_yasg.utils import swagger_auto_schema
 
 from apps.user.api.serializers import UserSerializer
 from apps.base.authentication import Authentication
-from apps.user.api.serializers import UserSerializer
+from apps.localfood.models import LocalFood
+from apps.localfood.api.serializers import LocalFoodSerializer
+from apps.products.models import Product
+from apps.products.api.serializers import ProductSerializer
 
 LOGOUT_RESPONSE = openapi.Response('Sesión cerrada con éxito')
 
@@ -90,14 +93,23 @@ class TokenInfoAbout(APIView):
 
   def get(self, request):
     request_token = request.auth
-    print(request_token)
-    if request_token is None:
-      return Response({'mensaje': 'Debes envíar un token'}, status=status.HTTP_400_BAD_REQUEST)
-
     token = Token.objects.filter(key=request_token).first()
     if not token:
       return Response({'mensaje': 'No se encontró un usuario con estas credenciales'}, status=status.HTTP_400_BAD_REQUEST)
 
     user = token.user
     user_serializer = UserSerializer(user)
-    return Response(user_serializer.data)
+
+    localfood = LocalFood.objects.filter(owner=user.id).first()
+    localfood_serializer = LocalFoodSerializer(localfood)
+
+    products_serializer = None
+    if localfood is not None:
+      products = Product.objects.filter(localfood=localfood.id)
+      products_serializer = ProductSerializer(products, many=True)
+
+    return Response({
+      'user': user_serializer.data,
+      'localfood': localfood_serializer.data if localfood else None,
+      'products': products_serializer.data if products_serializer else [],
+    })
