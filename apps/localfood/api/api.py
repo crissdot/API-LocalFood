@@ -8,6 +8,8 @@ from .serializers import LocalFoodSerializer
 from apps.base.authentication import Authentication
 from apps.base.permissions import IsAuthenticatedAndOwnerUserOrReadOnly
 from apps.base.utils import get_data_with_new_field
+from apps.products.models import Product
+from apps.products.api.serializers import ProductSerializer
 
 class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
@@ -46,7 +48,16 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     """
     localfood = self.get_object(request, pk)
     localfood_serializer = LocalFoodSerializer(localfood)
-    return Response(localfood_serializer.data)
+
+    products_serializer = None
+    if localfood is not None:
+      products = Product.objects.filter(localfood=localfood.id, is_active=True)
+      products_serializer = ProductSerializer(products, many=True)
+
+    return Response({
+      **localfood_serializer.data,
+      'products': products_serializer.data if products_serializer else [],
+    })
 
   def create(self, request):
     """
