@@ -27,6 +27,7 @@ class User(AbstractBaseUser, BaseModel):
   phone_number = models.CharField(max_length=10, null=True, blank=True)
   email = models.EmailField(null=True, blank=True)
   is_superuser = models.BooleanField(default=False)
+  profile_image = models.ImageField(upload_to='images/user/', null=True, blank=True)
   objects = UserManager()
 
   USERNAME_FIELD = 'username'
