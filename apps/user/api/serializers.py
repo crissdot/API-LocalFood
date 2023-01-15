@@ -19,8 +19,11 @@ class UserSerializer(serializers.ModelSerializer):
 
   def update(self, instance, validated_data):
     updated_user = super().update(instance, validated_data)
-    updated_user.set_password(validated_data['password'])
-    updated_user.save()
+    try:
+      updated_user.set_password(validated_data['password'])
+      updated_user.save()
+    except:
+      print("password doesn't exist")
     return updated_user
 
   def to_representation(self, instance):
