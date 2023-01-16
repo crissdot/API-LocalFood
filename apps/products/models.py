@@ -12,6 +12,7 @@ class Category(BaseModel):
 
   class Meta:
     verbose_name_plural='Categories'
+    db_table = 'categorias'
 
 
 class Product(BaseModel):
@@ -28,3 +29,4 @@ class Product(BaseModel):
   class Meta:
     verbose_name='Product (Platillo)'
     verbose_name_plural='Products (Platillos)'
+    db_table = 'platillos'

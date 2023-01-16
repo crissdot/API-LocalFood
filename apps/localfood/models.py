@@ -22,3 +22,4 @@ class LocalFood(BaseModel):
   class Meta:
     verbose_name='Local Food (Negocio)'
     verbose_name_plural='Local Foods (Negocios)'
+    db_table = 'negocios'
