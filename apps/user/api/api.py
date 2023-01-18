@@ -17,7 +17,7 @@ class UserViewSet(viewsets.GenericViewSet):
   permission_classes = (IsAuthenticatedAndOwnerUserOrCreateOne, )
 
   def get_object(self, request, pk):
-    user = get_object_or_404(User, pk=pk)
+    user = get_object_or_404(User, pk=pk, is_active=True)
     self.check_object_permissions(request, user)
     return user
 

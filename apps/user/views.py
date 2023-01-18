@@ -100,12 +100,12 @@ class TokenInfoAbout(APIView):
     user = token.user
     user_serializer = UserSerializer(user)
 
-    localfood = LocalFood.objects.filter(owner=user.id).first()
+    localfood = LocalFood.objects.filter(owner=user.id, is_active=True).first()
     localfood_serializer = LocalFoodSerializer(localfood)
 
     products_serializer = None
     if localfood is not None:
-      products = Product.objects.filter(localfood=localfood.id)
+      products = Product.objects.filter(localfood=localfood.id, is_active=True)
       products_serializer = ProductSerializer(products, many=True)
 
     return Response({

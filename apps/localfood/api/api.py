@@ -21,7 +21,7 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     return get_data_with_new_field(request, 'owner', request.user.id)
 
   def get_object(self, request, pk):
-    localfood = get_object_or_404(LocalFood, pk=pk)
+    localfood = get_object_or_404(LocalFood, pk=pk, is_active=True)
     self.check_object_permissions(request, localfood.owner)
     return localfood
 

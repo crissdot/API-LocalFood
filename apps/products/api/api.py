@@ -15,7 +15,7 @@ class CategoryViewSet(viewsets.GenericViewSet):
   queryset = None
 
   def get_object(self, pk):
-    return get_object_or_404(Category, pk=pk)
+    return get_object_or_404(Category, pk=pk, is_active=True)
 
   def get_queryset(self):
     if self.queryset is None:
@@ -49,14 +49,14 @@ class ProductViewSet(viewsets.GenericViewSet):
   permission_classes = (IsAuthenticatedAndOwnerUserOrReadOnly, )
 
   def get_data_with_localfood(self, request):
-    localfood = LocalFood.objects.filter(owner=request.user.id).first()
+    localfood = LocalFood.objects.filter(owner=request.user.id, is_active=True).first()
     if localfood is None:
       return None
 
     return get_data_with_new_field(request, 'localfood', localfood.id)
 
   def get_object(self, request, pk):
-    product = get_object_or_404(Product, pk=pk)
+    product = get_object_or_404(Product, pk=pk, is_active=True)
     self.check_object_permissions(request, product.localfood.owner)
     return product
 
