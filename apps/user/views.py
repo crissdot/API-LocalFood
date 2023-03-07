@@ -100,7 +100,7 @@ class TokenInfoAbout(APIView):
     user = token.user
     user_serializer = UserSerializer(user)
 
-    localfood = LocalFood.objects.filter(owner=user.id, is_active=True).first()
+    localfood = LocalFood.objects.filter(owner=user.id).first()
     localfood_serializer = LocalFoodSerializer(localfood)
 
     products_serializer = None

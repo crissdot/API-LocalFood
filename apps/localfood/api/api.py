@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework import viewsets
 
@@ -122,3 +123,19 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     localfood.is_active = False
     localfood.save()
     return Response({'detail': 'Negocio eliminado correctamente'})
+
+  @action(detail=True, methods=['post'])
+  def restore(self, request, pk=None):
+    """
+    Restaurar negocio
+
+    RUTA PROTEGIDA, SOLO DUEÑO
+
+    Simplemente al llamar este método en caso que el usuario haya eliminado su restuarante este será restaurado, caso contrario
+    no se hará nada
+    """
+    localfood = get_object_or_404(LocalFood, pk=pk, is_active=False)
+    self.check_object_permissions(request, localfood.owner)
+    localfood.is_active = True
+    localfood.save()
+    return Response({'detail': 'Negocio restaurado correctamente'})
