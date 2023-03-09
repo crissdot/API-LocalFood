@@ -39,7 +39,22 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     """
     localfood = self.get_queryset()
     localfood_serializer = LocalFoodSerializer(localfood, many=True)
-    return Response(localfood_serializer.data)
+    localfoods = localfood_serializer.data
+
+    # This includes the categories of all products inside a localfood
+    if request.GET.get('categories', False):
+      for localfood in localfoods:
+        products = Product.objects.filter(localfood=localfood['id'], is_active=True)
+        products_serializer = ProductSerializer(products, many=True)
+        all_categories = list()
+        for product in products_serializer.data:
+          for category in all_categories:
+            if category['id'] == product['category']['id']:
+              break
+          all_categories.append(product['category'])
+        localfood['categories'] = all_categories
+
+    return Response(localfoods)
 
   def retrieve(self, request, pk=None):
     """
