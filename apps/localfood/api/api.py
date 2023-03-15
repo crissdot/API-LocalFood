@@ -26,9 +26,11 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     self.check_object_permissions(request, localfood.owner)
     return localfood
 
-  def get_queryset(self):
-    if self.queryset is None:
+  def get_queryset(self, keywords = None):
+    if keywords is None:
       self.queryset = LocalFood.objects.filter(is_active = True)
+    else:
+      self.queryset = LocalFood.objects.filter(is_active = True, name__icontains = keywords) | LocalFood.objects.filter(is_active = True, description__icontains = keywords)
     return self.queryset
 
   def list(self, request):
@@ -37,7 +39,7 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
     Retorna un array con todos los negocios existentes, en caso de no haber niguno retorna un array vacío
     """
-    localfood = self.get_queryset()
+    localfood = self.get_queryset(request.GET.get('keywords', None))
     localfood_serializer = LocalFoodSerializer(localfood, many=True)
     localfoods = localfood_serializer.data
 
