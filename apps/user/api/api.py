@@ -9,6 +9,9 @@ from ..models import User
 from .serializers import UserSerializer, PasswordSerializer
 from apps.base.authentication import Authentication
 from apps.base.permissions import IsAuthenticatedAndOwnerUserOrCreateOne
+from apps.localfood.api.serializers import LocalFoodSerializer
+from apps.products.models import Product
+from apps.products.api.serializers import ProductSerializer
 
 class UserViewSet(viewsets.GenericViewSet):
   serializer_class = UserSerializer
@@ -124,3 +127,34 @@ class UserViewSet(viewsets.GenericViewSet):
     user.is_active = False
     user.save()
     return Response({'detail': 'Usuario eliminado correctamente'})
+
+  @action(detail=True, url_path='favorite-localfoods')
+  def favorite_localfoods(self, request, pk=None):
+    """
+    Obtener los negocios favoritos para un usuario
+
+    RUTA PROTEGIDA, SOLO DUEÑO
+
+    Dado el token obtenido se buscará sus negocios favoritos
+    """
+    if request.user is None or request.user.id != int(pk):
+      return Response({'detail': 'Es necesario enviar un token de autenticación válido para este usuario'}, status=status.HTTP_401_UNAUTHORIZED)
+    user = self.get_object(request, pk)
+
+    localfood_serializer = LocalFoodSerializer(user.favs, many=True)
+    localfoods = localfood_serializer.data
+
+    # This includes the categories of all products inside a localfood
+    if request.GET.get('categories', False):
+      for localfood in localfoods:
+        products = Product.objects.filter(localfood=localfood['id'], is_active=True)
+        products_serializer = ProductSerializer(products, many=True)
+        all_categories = list()
+        for product in products_serializer.data:
+          for category in all_categories:
+            if category['id'] == product['category']['id']:
+              break
+          all_categories.append(product['category'])
+        localfood['categories'] = all_categories
+
+    return Response(localfoods)
