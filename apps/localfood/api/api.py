@@ -21,9 +21,10 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
   def get_data_with_owner(self, request):
     return get_data_with_new_field(request, 'owner', request.user.id)
 
-  def get_object(self, request, pk):
+  def get_object(self, request, pk, only_owner=True):
     localfood = get_object_or_404(LocalFood, pk=pk, is_active=True)
-    self.check_object_permissions(request, localfood.owner)
+    if only_owner:
+      self.check_object_permissions(request, localfood.owner)
     return localfood
 
   def get_queryset(self, keywords = None):
@@ -156,3 +157,18 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     localfood.is_active = True
     localfood.save()
     return Response({'detail': 'Negocio restaurado correctamente'})
+
+  @action(detail=True, methods=['post'], url_path='fav')
+  def save_to_fav(self, request, pk=None):
+    """
+    Ruta para guardar un negocio a favoritos
+
+    RUTA PROTEGIDA
+
+    Dado el token obtenido se buscará sus negocios favoritos
+    """
+    if request.user is None:
+      return Response({'detail': 'Es necesario enviar un token de autenticación válido'}, status=status.HTTP_401_UNAUTHORIZED)
+    localfood = self.get_object(request, pk, False)
+    localfood.favs.add(request.user)
+    return Response({'detail': 'Localfood guardado a favoritos exitosamente'})
