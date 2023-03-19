@@ -40,8 +40,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
 
     Retorna un array con todos los negocios existentes, en caso de no haber niguno retorna un array vacío
     """
-    localfood = self.get_queryset(request.GET.get('keywords', None))
-    localfood_serializer = LocalFoodSerializer(localfood, many=True)
+    localfood_list = self.get_queryset(request.GET.get('keywords', None))
+    localfood_serializer = LocalFoodSerializer(localfood_list, many=True)
     localfoods = localfood_serializer.data
 
     # This includes the categories of all products inside a localfood
@@ -56,6 +56,11 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
               break
           all_categories.append(product['category'])
         localfood['categories'] = all_categories
+
+    # This is true if the current user has added to fav
+    if request.user is not None:
+      for localfood in localfoods:
+        localfood['added_to_fav'] = localfood_list.get(pk=localfood['id']).favs.filter(pk=request.user.id).count() > 0
 
     return Response(localfoods)
 

@@ -32,6 +32,8 @@ class LocalFoodSerializer(serializers.ModelSerializer):
       'profile_image': instance.profile_image.url if instance.profile_image else None,
       'banner_image': instance.banner_image.url if instance.banner_image else None,
       'owner': instance.owner.username,
+      'favs': instance.favs.count(),
+      'added_to_fav': False,
       'is_deleted': False if instance.is_active else True
     }
 

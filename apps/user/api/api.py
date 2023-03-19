@@ -157,4 +157,9 @@ class UserViewSet(viewsets.GenericViewSet):
           all_categories.append(product['category'])
         localfood['categories'] = all_categories
 
+    # This is true if the current user has added to fav
+    if request.user is not None:
+      for localfood in localfoods:
+        localfood['added_to_fav'] = True
+
     return Response(localfoods)
