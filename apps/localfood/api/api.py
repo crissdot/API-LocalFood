@@ -169,6 +169,11 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     """
     if request.user is None:
       return Response({'detail': 'Es necesario enviar un token de autenticación válido'}, status=status.HTTP_401_UNAUTHORIZED)
+
     localfood = self.get_object(request, pk, False)
+
+    if localfood.favs.filter(pk=request.user.id).count() > 0:
+      return Response({'detail': 'Ya se habia guardado a favoritos con anterioridad'}, status=status.HTTP_409_CONFLICT)
+
     localfood.favs.add(request.user)
     return Response({'detail': 'Localfood guardado a favoritos exitosamente'})
