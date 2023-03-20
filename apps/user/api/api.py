@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework import viewsets
 from drf_yasg.utils import swagger_auto_schema
@@ -128,7 +129,7 @@ class UserViewSet(viewsets.GenericViewSet):
     user.save()
     return Response({'detail': 'Usuario eliminado correctamente'})
 
-  @action(detail=True, url_path='favorite-localfoods')
+  @action(detail=True, url_path='favorite-localfoods', permission_classes=[IsAuthenticated])
   def favorite_localfoods(self, request, pk=None):
     """
     Obtener los negocios favoritos para un usuario
@@ -137,7 +138,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
     Dado el token obtenido se buscará sus negocios favoritos
     """
-    if request.user is None or request.user.id != int(pk):
+    if request.user.id != int(pk):
       return Response({'detail': 'Es necesario enviar un token de autenticación válido para este usuario'}, status=status.HTTP_401_UNAUTHORIZED)
     user = self.get_object(request, pk)
 

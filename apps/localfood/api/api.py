@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework import viewsets
 
@@ -163,22 +164,23 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     localfood.save()
     return Response({'detail': 'Negocio restaurado correctamente'})
 
-  @action(detail=True, methods=['post'], url_path='fav')
+  @action(detail=True, methods=['post', 'delete'], url_path='fav', permission_classes=[IsAuthenticated])
   def save_to_fav(self, request, pk=None):
     """
-    Ruta para guardar un negocio a favoritos
+    Ruta para guardar o eliminad un negocio de favoritos
 
     RUTA PROTEGIDA
-
-    Dado el token obtenido se buscará sus negocios favoritos
     """
-    if request.user is None:
-      return Response({'detail': 'Es necesario enviar un token de autenticación válido'}, status=status.HTTP_401_UNAUTHORIZED)
-
     localfood = self.get_object(request, pk, False)
+    was_added = localfood.favs.filter(pk=request.user.id).count() > 0
 
-    if localfood.favs.filter(pk=request.user.id).count() > 0:
-      return Response({'detail': 'Ya se habia guardado a favoritos con anterioridad'}, status=status.HTTP_409_CONFLICT)
+    if request.method == 'POST':
+      if was_added:
+        return Response({'detail': 'Ya se habia guardado a favoritos con anterioridad'}, status=status.HTTP_409_CONFLICT)
+      localfood.favs.add(request.user)
+      return Response({'detail': 'Localfood guardado a favoritos exitosamente'})
 
-    localfood.favs.add(request.user)
-    return Response({'detail': 'Localfood guardado a favoritos exitosamente'})
+    if not was_added:
+      return Response({'detail': 'No se puede eliminar sin haberlo guardado antes'}, status=status.HTTP_409_CONFLICT)
+    localfood.favs.remove(request.user)
+    return Response({'detail': 'Localfood eliminado de favoritos exitosamente'})
