@@ -7,8 +7,8 @@ from ..localfood.models import LocalFood
 # Create your models here.
 class Comment(BaseModel):
   text = models.TextField(null=False, blank=False)
-  user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False, related_name='user')
-  localfood = models.ForeignKey(LocalFood, on_delete=models.CASCADE, null=False, blank=False, related_name='localfood')
+  user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=True, related_name='user')
+  localfood = models.ForeignKey(LocalFood, on_delete=models.CASCADE, null=False, blank=True, related_name='localfood')
 
   def __str__(self):
     return f'{self.text}'
