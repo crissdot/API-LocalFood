@@ -15,7 +15,7 @@ class LocalFood(BaseModel):
   profile_image = models.ImageField(upload_to='images/localfood/', null=True, blank=True)
   banner_image = models.ImageField(upload_to='images/localfood/', null=True, blank=True)
   owner = models.OneToOneField(User, on_delete=models.RESTRICT, null=False, blank=False, related_name='owner')
-  favs = models.ManyToManyField(User, related_name='favs', null=False, blank=True)
+  favs = models.ManyToManyField(User, related_name='favs', blank=True)
 
   def __str__(self):
     return f'{self.name}: {self.description}'
