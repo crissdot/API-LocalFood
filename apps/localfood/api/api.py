@@ -21,8 +21,8 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
   authentication_classes = (Authentication, )
   permission_classes = (IsAuthenticatedAndOwnerUserOrReadOnly, )
 
-  def get_data_with_owner(self, request):
-    return get_data_with_new_field(request, 'owner', request.user.id)
+  def get_data_with_owner(self, request, field_name = 'owner'):
+    return get_data_with_new_field(request, field_name, request.user.id)
 
   def get_object(self, request, pk, only_owner=True):
     localfood = get_object_or_404(LocalFood, pk=pk, is_active=True)
@@ -191,3 +191,20 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
       return Response({'detail': 'No se puede eliminar sin haberlo guardado antes'}, status=status.HTTP_409_CONFLICT)
     localfood.favs.remove(request.user)
     return Response({'detail': 'Localfood eliminado de favoritos exitosamente'})
+
+  @action(detail=True, methods=['post'], url_path='comment', permission_classes=[IsAuthenticated])
+  def add_comment(self, request, pk=None):
+    """
+    Ruta para crear un comentario en un negocio
+
+    RUTA PROTEGIDA
+    """
+    localfood = self.get_object(request, pk, False)
+    data = self.get_data_with_owner(request, 'user')
+    data['localfood'] = localfood.id
+
+    comment_serializer = CommentSerializer(data=data)
+    if comment_serializer.is_valid():
+      comment_serializer.save()
+      return Response(comment_serializer.data, status=status.HTTP_201_CREATED)
+    return Response(comment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
