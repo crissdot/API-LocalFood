@@ -52,6 +52,7 @@ LOCAL_APPS = [
     'apps.localfood',
     'apps.products',
     'apps.user',
+    'apps.comment',
 ]
 
 INSTALLED_APPS = BASED_APPS + THIRD_APPS + LOCAL_APPS
