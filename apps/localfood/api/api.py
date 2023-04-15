@@ -12,6 +12,8 @@ from apps.base.permissions import IsAuthenticatedAndOwnerUserOrReadOnly
 from apps.base.utils import get_data_with_new_field
 from apps.products.models import Product
 from apps.products.api.serializers import ProductSerializer
+from apps.comment.models import Comment
+from apps.comment.api.serializers import CommentSerializer
 
 class LocalFoodViewSet(viewsets.GenericViewSet):
   serializer_class = LocalFoodSerializer
@@ -75,13 +77,18 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
     localfood_serializer = LocalFoodSerializer(localfood)
 
     products_serializer = None
+    comments_serializer = None
     if localfood is not None:
       products = Product.objects.filter(localfood=localfood.id, is_active=True)
       products_serializer = ProductSerializer(products, many=True)
 
+      comments = Comment.objects.filter(localfood=localfood.id, is_active=True)
+      comments_serializer = CommentSerializer(comments, many=True)
+
     return Response({
       **localfood_serializer.data,
       'products': products_serializer.data if products_serializer else [],
+      'comments': comments_serializer.data if comments_serializer else [],
     })
 
   def create(self, request):
