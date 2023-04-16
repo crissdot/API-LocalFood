@@ -143,7 +143,7 @@ class UserViewSet(viewsets.GenericViewSet):
     user = self.get_object(request, pk)
 
     localfood_serializer = LocalFoodSerializer(user.favs, many=True)
-    localfoods = localfood_serializer.data
+    localfoods = filter(lambda x: not x['is_deleted'], localfood_serializer.data)
 
     # This includes the categories of all products inside a localfood
     if request.GET.get('categories', False):
