@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from ..models import LocalFood
+from ... import constants
 
 class LocalFoodSerializer(serializers.ModelSerializer):
   SOCIAL_MEDIA_OPTIONS = {
@@ -29,8 +30,8 @@ class LocalFoodSerializer(serializers.ModelSerializer):
       'schedule': instance.schedule,
       'has_delivery': instance.has_delivery,
       'social_media': (self.SOCIAL_MEDIA_OPTIONS[option] for option in instance.social_media) if instance.social_media else None,
-      'profile_image': instance.profile_image.url if instance.profile_image else None,
-      'banner_image': instance.banner_image.url if instance.banner_image else None,
+      'profile_image': instance.profile_image.url if instance.profile_image else constants.PLACEHOLDER_IMAGE,
+      'banner_image': instance.banner_image.url if instance.banner_image else constants.PLACEHOLDER_IMAGE,
       'owner': instance.owner.username,
       'favs': instance.favs.count(),
       'added_to_fav': False,

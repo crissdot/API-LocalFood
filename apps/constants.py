@@ -1,0 +1,1 @@
+PLACEHOLDER_IMAGE = '/media/images/placeholder_image.png'

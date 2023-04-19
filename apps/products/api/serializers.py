@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from ..models import Category, Product
+from ... import constants
 
 class CategorySerializer(serializers.ModelSerializer):
 
@@ -21,7 +22,7 @@ class ProductSerializer(serializers.ModelSerializer):
       'name': instance.name,
       'description': instance.description,
       'price': instance.price,
-      'image': instance.image.url if instance.image else None,
+      'image': instance.image.url if instance.image else constants.PLACEHOLDER_IMAGE,
       'category': {
         'id': instance.category.id,
         'description': instance.category.description

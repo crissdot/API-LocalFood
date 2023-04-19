@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from ..models import User
+from ... import constants
 
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
@@ -35,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
       'phone_number': instance.phone_number,
       'email': instance.email,
       'profile_image': instance.profile_image.url if instance.profile_image else None,
+      # 'profile_image': instance.profile_image.url if instance.profile_image else constants.PLACEHOLDER_IMAGE,
     }
 
 
