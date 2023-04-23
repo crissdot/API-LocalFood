@@ -35,8 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
       'last_name': instance.last_name,
       'phone_number': instance.phone_number,
       'email': instance.email,
-      'profile_image': instance.profile_image.url if instance.profile_image else None,
-      # 'profile_image': instance.profile_image.url if instance.profile_image else constants.PLACEHOLDER_IMAGE,
+      'profile_image': instance.profile_image.url if instance.profile_image else constants.PLACEHOLDER_USER_IMAGE,
     }
 
 

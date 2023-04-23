@@ -22,7 +22,7 @@ class ProductSerializer(serializers.ModelSerializer):
       'name': instance.name,
       'description': instance.description,
       'price': instance.price,
-      'image': instance.image.url if instance.image else constants.PLACEHOLDER_IMAGE,
+      'image': instance.image.url if instance.image else constants.PLACEHOLDER_PRODUCT_IMAGE,
       'category': {
         'id': instance.category.id,
         'description': instance.category.description
