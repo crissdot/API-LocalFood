@@ -16,4 +16,5 @@ class CommentSerializer(serializers.ModelSerializer):
         'id': instance.user.id,
         'username': instance.user.username
       },
+      'created_at': instance.created_at,
     }

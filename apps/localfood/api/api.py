@@ -82,13 +82,15 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
       products = Product.objects.filter(localfood=localfood.id, is_active=True)
       products_serializer = ProductSerializer(products, many=True)
 
-      comments = Comment.objects.filter(localfood=localfood.id, is_active=True)
-      comments_serializer = CommentSerializer(comments, many=True)
+      comments_objects = Comment.objects.filter(localfood=localfood.id, is_active=True)
+      comments_serializer = CommentSerializer(comments_objects, many=True)
+      comments = comments_serializer.data if comments_serializer else []
+      comments = sorted(comments, key = lambda x : x['id'], reverse=True)
 
     return Response({
       **localfood_serializer.data,
       'products': products_serializer.data if products_serializer else [],
-      'comments': comments_serializer.data if comments_serializer else [],
+      'comments': comments,
     })
 
   def create(self, request):
