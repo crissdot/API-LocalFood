@@ -54,10 +54,13 @@ class LocalFoodViewSet(viewsets.GenericViewSet):
         products_serializer = ProductSerializer(products, many=True)
         all_categories = list()
         for product in products_serializer.data:
+          should_add = True
           for category in all_categories:
             if category['id'] == product['category']['id']:
+              should_add = False
               break
-          all_categories.append(product['category'])
+          if should_add:
+            all_categories.append(product['category'])
         localfood['categories'] = all_categories
 
     # This is true if the current user has added to fav
